@@ -262,11 +262,14 @@ module RR
       # * +remaining_attempts+: the number of remaining replication attempts for this difference
       def attempt_change(action, source_db, target_db, diff, remaining_attempts)
         begin
+          $log.info("XXXXX #{__method__} Before Savepoint")
           rep_helper.session.send(target_db).execute "savepoint rr_#{action}_#{remaining_attempts}"
           yield
           unless rep_helper.new_transaction?
+            $log.info("XXXXX #{__method__} Before Release Savepoint")
             rep_helper.session.send(target_db).execute "release savepoint rr_#{action}_#{remaining_attempts}"
           end
+          $log.info("XXXXX #{__method__} After Release Savepoint")
         rescue Exception => e
           $log.info("XXXXX #{__method__} #{e}")
 
