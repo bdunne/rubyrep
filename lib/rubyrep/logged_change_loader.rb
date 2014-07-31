@@ -140,6 +140,7 @@ module RR
         break if (self.change_array.length - start_count) >= session.configuration.options[:mem_buffer_size]
       end
       cursor.clear
+$log.info("XXXXX #{__method__} CHANGE ARRAY LENGTH #{change_array.length}")
 
       return true
     end
