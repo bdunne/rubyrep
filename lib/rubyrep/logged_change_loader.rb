@@ -137,7 +137,7 @@ module RR
         key_changes << change
 
         break if $rubyrep_shutdown
-        break if (self.change_array.length - start_count) >= session.configuration.options[:mem_buffer_size]
+        break if (self.change_array.length - start_count) >= 5
       end
       cursor.clear
 $log.info("XXXXX #{__method__} CHANGE ARRAY LENGTH #{change_array.length}")
