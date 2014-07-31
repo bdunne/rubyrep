@@ -122,7 +122,7 @@ module RR
         :from => {'id' => current_id},
         :exclude_starting_row => true,
         :type_cast => true,
-        :row_buffer_size => session.configuration.options[:row_buffer_size]
+        :row_buffer_size => 5
       )
 
       start_count = self.change_array.length
