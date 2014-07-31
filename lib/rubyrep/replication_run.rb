@@ -118,6 +118,7 @@ module RR
                 diff.second_chance = true
                 second_chancers << diff
               else
+                $log.error("XXXXX #{e}")
                 $log.info("XXXXX REPLICATING DIFFERENCE FAILED")
                 begin
                   helper.log_replication_outcome diff, e.message,
