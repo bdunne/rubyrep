@@ -264,17 +264,18 @@ module RR
         Rails.logger.level = 0
         begin
           $log.info("XXXXX #{__method__} Before Savepoint")
-          rep_helper.session.send(target_db).connection.create_savepoint
+          connection = rep_helper.session.send(target_db).connection
+          connection.disable_auto_reconnect { connection.execute("savepoint rr_#{action}_#{remaining_attempts}") }
           yield
           unless rep_helper.new_transaction?
             $log.info("XXXXX #{__method__} Before Release Savepoint")
-            rep_helper.session.send(target_db).connection.release_savepoint
+            connection.disable_auto_reconnect { connection.execute("release savepoint rr_#{action}_#{remaining_attempts}") }
           end
           $log.info("XXXXX #{__method__} After Release Savepoint")
         rescue Exception => e
           $log.info("XXXXX #{__method__} #{e}")
 
-          rep_helper.session.send(target_db).connection.rollback_to_savepoint
+          connection.disable_auto_reconnect { connection.execute("rollback to savepoint rr_#{action}_#{remaining_attempts}") }
           raise
         ensure
         Rails.logger.level = 1
