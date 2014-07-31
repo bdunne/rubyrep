@@ -268,6 +268,8 @@ module RR
             rep_helper.session.send(target_db).execute "release savepoint rr_#{action}_#{remaining_attempts}"
           end
         rescue Exception => e
+          $log.info("XXXXX #{__method__} #{e}")
+
           rep_helper.session.send(target_db).execute "rollback to savepoint rr_#{action}_#{remaining_attempts}"
           raise
         end
