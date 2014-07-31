@@ -87,6 +87,7 @@ module RR
         session.corresponding_table(oldest, changes[oldest].table),
         changes[oldest].key)
 
+$log.warn("XXXXX DIFFERENCER KEY #{changes[oldest].key}")
       self.type = DIFF_TYPES[changes[:left].type][changes[:right].type]
       self.loaded = true
     end

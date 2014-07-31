@@ -101,7 +101,7 @@ module RR
                 replicator.replicate_difference diff
               end
             rescue Exception => e
-              if e.message =~ /violates foreign key constraint|foreign key constraint fails/i and !diff.second_chance?
+              if e.message =~ /duplicate key value violates unique constraint|violates foreign key constraint|foreign key constraint fails/i and !diff.second_chance?
                 # Note:
                 # Identifying the foreign key constraint violation via regular expression is
                 # database dependent and *dirty*.
