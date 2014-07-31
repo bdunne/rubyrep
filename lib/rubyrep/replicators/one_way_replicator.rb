@@ -261,6 +261,7 @@ module RR
       # * +diff+: the current ReplicationDifference instance
       # * +remaining_attempts+: the number of remaining replication attempts for this difference
       def attempt_change(action, source_db, target_db, diff, remaining_attempts)
+        Rails.logger.level = 0
         begin
           $log.info("XXXXX #{__method__} Before Savepoint")
           rep_helper.session.send(target_db).execute "savepoint rr_#{action}_#{remaining_attempts}"
@@ -275,6 +276,8 @@ module RR
 
           rep_helper.session.send(target_db).execute "rollback to savepoint rr_#{action}_#{remaining_attempts}"
           raise
+        ensure
+        Rails.logger.level = 1
         end
       end
 
