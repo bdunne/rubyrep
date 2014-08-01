@@ -99,6 +99,7 @@ module RR
     # Loads the change as per #table and #key. Works if the LoggedChange instance
     # is totally new or was already loaded before.
     def load
+      $log.warn("XXXXX #{self.class.name}##{__method__} : CALLER #{caller[0,3]}")
       current_type = LONG_TYPES[type]
 
       org_key = new_key || key
@@ -144,6 +145,7 @@ module RR
     def load_oldest
       begin
         change = loader.oldest_change
+      $log.warn("XXXXX #{self.class.name}##{__method__} : change #{change.inspect}")
         break unless change
         self.key = key_to_hash(change['change_key'])
         self.table = change['change_table']

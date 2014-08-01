@@ -140,7 +140,7 @@ module RR
         break if (self.change_array.length - start_count) >= 5
       end
       cursor.clear
-$log.info("XXXXX #{__method__} CHANGE ARRAY LENGTH #{change_array.length}")
+$log.info("XXXXX XXXXX #{self.class.name}##{__method__} CHANGE ARRAY LENGTH #{change_array.length}")
 
       return true
     end
@@ -166,18 +166,26 @@ $log.info("XXXXX #{__method__} CHANGE ARRAY LENGTH #{change_array.length}")
     # * +change_table+: the name of the table that was changed
     # * +change_key+: the change key of the modified record
     def load(change_table, change_key)
+      $log.warn("XXXXX #{self.class.name}##{__method__} CALLER #{caller[0, 3]}")
       change = nil
       table_change_tree = change_tree[change_table]
+      $log.warn("XXXXX #{self.class.name}##{__method__} CHANGE_TREE KEYS #{change_tree.keys.inspect}")
       if table_change_tree
+      $log.warn("XXXXX #{self.class.name}##{__method__} TABLE_CHANGE_TREE #{table_change_tree.inspect}")
         key_changes = table_change_tree[change_key]
         if key_changes
+          $log.warn("XXXXX #{self.class.name}##{__method__} KEY_CHANGES #{key_changes.inspect}")
           # get change object and delete from key_changes
           change = key_changes.shift
+          $log.warn("XXXXX #{self.class.name}##{__method__} CHANGE #{change.inspect}")
+          $log.warn("XXXXX #{self.class.name}##{__method__} CHANGE_ARRAY #{change_array.inspect}")
+          $log.warn("XXXXX #{self.class.name}##{__method__} CHANGE in CHANGE_ARRAY #{change_array[change['array_index']].inspect}")
 
           # delete change from change_array
           change_array[change['array_index']] = nil
 
           # delete change from database
+          $log.warn("XXXXX #{self.class.name}##{__method__} DELETING RECORD #{change['id'].inspect} from #{change_log_table.inspect}")
           connection.execute "delete from #{change_log_table} where id = #{change['id']}"
 
           # delete key_changes if empty

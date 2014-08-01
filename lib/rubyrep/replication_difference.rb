@@ -80,9 +80,15 @@ module RR
       [:left, :right].each do |database|
         oldest = OTHER_SIDE[database] if change_times[database] == nil
       end
+      $log.warn("XXXXX #{__method__} OLDEST #{oldest.inspect}")
+      $log.warn("XXXXX #{__method__} CHANGE TIMES LEFT #{change_times[:left].inspect}")
+      $log.warn("XXXXX #{__method__} CHANGE TIMES RIGHT #{change_times[:right].inspect}")
       oldest ||= change_times[:left] <= change_times[:right] ? :left : :right
+      $log.warn("XXXXX #{__method__} OLDEST #{oldest.inspect}")
+      $log.warn("XXXXX ABOUT TO LOAD OLDEST")
       changes[oldest].load_oldest
 
+      $log.warn("XXXXX ABOUT TO LOAD SPECIFIED")
       changes[OTHER_SIDE[oldest]].load_specified(
         session.corresponding_table(oldest, changes[oldest].table),
         changes[oldest].key)
