@@ -188,6 +188,7 @@ $log.info("XXXXX XXXXX #{self.class.name}##{__method__} CHANGE ARRAY LENGTH #{ch
           $log.warn("XXXXX #{self.class.name}##{__method__} OPEN TRANSACTIONS #{connection.connection.open_transactions.inspect}")
           begin
           $log.warn("XXXXX #{self.class.name}##{__method__} OPEN TRANSACTIONS #{connection.connection.open_transactions.inspect}")
+          $log.warn("XXXXX #{self.class.name}##{__method__} OUTSIDE TRANSACTION? #{connection.connection.outside_transaction?.inspect}")
             $log.warn("XXXXX #{self.class.name}##{__method__} DELETING RECORD #{change['id'].inspect} from #{change_log_table.inspect}")
             # $log.warn("XXXXX #{self.class.name}##{__method__} Connection #{connection.inspect}")
             connection.execute "delete from #{change_log_table} where id = #{change['id']};"
