@@ -185,7 +185,9 @@ $log.info("XXXXX XXXXX #{self.class.name}##{__method__} CHANGE ARRAY LENGTH #{ch
           change_array[change['array_index']] = nil
 
           # delete change from database
+          $log.warn("XXXXX #{self.class.name}##{__method__} OPEN TRANSACTIONS #{connection.connection.open_transactions.inspect}")
           begin
+          $log.warn("XXXXX #{self.class.name}##{__method__} OPEN TRANSACTIONS #{connection.connection.open_transactions.inspect}")
             $log.warn("XXXXX #{self.class.name}##{__method__} DELETING RECORD #{change['id'].inspect} from #{change_log_table.inspect}")
             connection.execute "delete from #{change_log_table} where id = #{change['id']}"
             $log.warn("XXXXX #{self.class.name}##{__method__} DELETED RECORD")
