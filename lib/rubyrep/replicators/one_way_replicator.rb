@@ -278,7 +278,6 @@ module RR
           # connection.disable_auto_reconnect { connection.execute("rollback to savepoint rr_#{action}_#{remaining_attempts}") }
           raise
         ensure
-        Rails.logger.level = 1
         end
       end
 
