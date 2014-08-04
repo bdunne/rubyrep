@@ -23,8 +23,7 @@ module RR
 
     # Returns the current replicator; creates it if necessary.
     def replicator
-      @replicator ||=
-        Replicators.replicators[session.configuration.options[:replicator]].new(helper)
+      @replicator ||= Replicators.replicators[session.configuration.options[:replicator]].new(helper)
     end
 
     # Returns the current LoggedChangeLoaders; creates it if necessary
@@ -121,9 +120,11 @@ module RR
                 $log.error("XXXXX #{e}")
                 $log.info("XXXXX REPLICATING DIFFERENCE FAILED")
                 begin
-                  helper.log_replication_outcome diff, e.message,
-                    e.class.to_s + "\n" + e.backtrace.join("\n")
+                  $log.info("XXXXX #{self.class.name}##{__method__} LOGGING FAILURE TO DATABASE")
+                  $log.info("XXXXX #{self.class.name}##{__method__} BACKTRACE #{e.backtrace.join("\n")}")
+                  helper.log_replication_outcome diff, e.message, e.class.to_s + "\n" + e.backtrace.join("\n")
                 rescue Exception => _
+                  $log.info("XXXXX #{self.class.name}##{__method__} RE-RAISING EXCEPTION")
                   # if logging to database itself fails, re-raise the original exception
                   raise e
                 end
