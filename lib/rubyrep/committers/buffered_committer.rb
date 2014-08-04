@@ -50,7 +50,9 @@ module RR
           @commit_frequency = session.configuration.options[:commit_frequency]
           @commit_frequency ||= DEFAULT_COMMIT_FREQUENCY
         end
+        $log.info("XXXXX #{self.class.name}##{__method__} COMMIT FREQUENCY #{@commit_frequency.inspect}")
         @commit_frequency
+        5
       end
 
       # Commits the open transactions in both databases. Before committing,

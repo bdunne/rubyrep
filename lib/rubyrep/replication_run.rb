@@ -23,8 +23,7 @@ module RR
 
     # Returns the current replicator; creates it if necessary.
     def replicator
-      @replicator ||=
-        Replicators.replicators[session.configuration.options[:replicator]].new(helper)
+      @replicator ||= Replicators.replicators[session.configuration.options[:replicator]].new(helper)
     end
 
     # Returns the current LoggedChangeLoaders; creates it if necessary
@@ -65,17 +64,17 @@ module RR
     def run
       $stdout.write "-" if session.configuration.options[:replication_trace]
 
-      return unless [:left, :right].any? do |database|
-        next false if session.configuration.send(database)[:mode] == :slave
-        changes_pending = false
-        t = Thread.new do
-          changes_pending = session.send(database).select_one(
-            "select id from #{session.configuration.options[:rep_prefix]}_pending_changes limit 1"
-          ) != nil
-        end
-        t.join session.configuration.options[:database_connection_timeout]
-        changes_pending
-      end
+      # return unless [:left, :right].any? do |database|
+      #   next false if session.configuration.send(database)[:mode] == :slave
+      #   changes_pending = false
+      #   t = Thread.new do
+      #     changes_pending = session.send(database).select_one(
+      #       "select id from #{session.configuration.options[:rep_prefix]}_pending_changes limit 1"
+      #     ) != nil
+      #   end
+      #   t.join session.configuration.options[:database_connection_timeout]
+      #   changes_pending
+      # end
 
       # Apparently sometimes above check for changes takes already so long, that
       # the replication run times out.
@@ -89,16 +88,22 @@ module RR
 
         loop do
           $stdout.write "." if session.configuration.options[:replication_trace]
+          $log.info("XXXXX UPDATING LOADERS")
           break unless loaders.update # ensure the cache of change log records is up-to-date
+          $log.info("XXXXX UPDATING LOADERS COMPLETE")
 
           loop do
             begin
+              $log.info("XXXXX LOADING DIFFERENCE")
               diff = load_difference
+              $log.info("XXXXX LOADING DIFFERENCE COMPLETE")
               break unless diff.loaded?
               break_on_terminate = sweeper.terminated? || $rubyrep_shutdown
               break if break_on_terminate
-              if diff.type != :no_diff and not event_filtered?(diff)
+              if diff.type != :no_diff and not event_filtered?(diff)  # Should be :no_change, :no_diff doesn't exist
+                $log.info("XXXXX REPLICATING DIFFERENCE")
                 replicator.replicate_difference diff
+                $log.info("XXXXX REPLICATING DIFFERENCE COMPLETE")
               end
             rescue Exception => e
               if e.message =~ /violates foreign key constraint|foreign key constraint fails/i and !diff.second_chance?
@@ -108,13 +113,18 @@ module RR
                 # It would be better to use the ActiveRecord #translate_exception mechanism.
                 # However as per version 3.0.5 this doesn't work yet properly.
 
+                $log.info("XXXXX REPLICATING DIFFERENCE FAILED FIRST TIME")
                 diff.second_chance = true
                 second_chancers << diff
               else
+                $log.error("XXXXX #{e}")
+                $log.info("XXXXX REPLICATING DIFFERENCE FAILED")
                 begin
-                  helper.log_replication_outcome diff, e.message,
-                    e.class.to_s + "\n" + e.backtrace.join("\n")
+                  $log.info("XXXXX #{self.class.name}##{__method__} LOGGING FAILURE TO DATABASE")
+                  $log.info("XXXXX #{self.class.name}##{__method__} BACKTRACE #{e.backtrace.join("\n")}")
+                  helper.log_replication_outcome diff, e.message, e.class.to_s + "\n" + e.backtrace.join("\n")
                 rescue Exception => _
+                  $log.info("XXXXX #{self.class.name}##{__method__} RE-RAISING EXCEPTION")
                   # if logging to database itself fails, re-raise the original exception
                   raise e
                 end

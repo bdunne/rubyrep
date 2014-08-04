@@ -32,7 +32,7 @@ module RR
     # Default #options for a new Configuration object.
     DEFAULT_OPTIONS = {
       :proxy_block_size => 1000,
-      :row_buffer_size => 1000,
+      :row_buffer_size => 5,
       :mem_buffer_size => 4294967295, # Max value for 32bit
       :replicator => :two_way,
       :committer => :buffered_commit,

@@ -122,7 +122,7 @@ module RR
         :from => {'id' => current_id},
         :exclude_starting_row => true,
         :type_cast => true,
-        :row_buffer_size => session.configuration.options[:row_buffer_size]
+        :row_buffer_size => 5
       )
 
       start_count = self.change_array.length
@@ -137,7 +137,7 @@ module RR
         key_changes << change
 
         break if $rubyrep_shutdown
-        break if (self.change_array.length - start_count) >= session.configuration.options[:mem_buffer_size]
+        break if (self.change_array.length - start_count) >= 5
       end
       cursor.clear
 
