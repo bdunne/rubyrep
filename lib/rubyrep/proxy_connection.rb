@@ -382,6 +382,9 @@ module RR
     # +values+ is a hash of column_name => value pairs.
     def insert_record(table, values)
       execute table_insert_query(table, values)
+    rescue => err
+      $log.info("XXXXX #{self.class.name}##{__method__} INSERT FAILURE")
+      $log.info("XXXXX #{self.class.name}##{__method__} #{err.inspect}")
     end
     
     # Returns an SQL update query.
