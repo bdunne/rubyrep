@@ -385,6 +385,7 @@ module RR
     rescue ActiveRecord::RecordNotUnique => err
       $log.info("XXXXX #{self.class.name}##{__method__} RESCUING INSERT FAILURE RECORD NOT UNIQUE")
       $log.info("XXXXX #{self.class.name}##{__method__} #{err.inspect}")
+      $log.info("XXXXX #{self.class.name}##{__method__} CALLER #{caller.pretty_inspect}")
     end
     
     # Returns an SQL update query.
