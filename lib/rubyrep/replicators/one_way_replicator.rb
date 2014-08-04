@@ -262,23 +262,23 @@ module RR
       # * +remaining_attempts+: the number of remaining replication attempts for this difference
       def attempt_change(action, source_db, target_db, diff, remaining_attempts)
         Rails.logger.level = 0
-        begin
-          $log.info("XXXXX #{__method__} Before Savepoint")
+        # begin
+        #   $log.info("XXXXX #{__method__} Before Savepoint")
           # connection = rep_helper.session.send(target_db).connection
           # connection.disable_auto_reconnect { connection.execute("savepoint rr_#{action}_#{remaining_attempts}") }
           yield
-          unless rep_helper.new_transaction?
-            $log.info("XXXXX #{__method__} Before Release Savepoint")
-            # connection.disable_auto_reconnect { connection.execute("release savepoint rr_#{action}_#{remaining_attempts}") }
-          end
-          $log.info("XXXXX #{__method__} After Release Savepoint")
-        rescue Exception => e
-          $log.info("XXXXX #{__method__} #{e}")
+        #   unless rep_helper.new_transaction?
+        #     $log.info("XXXXX #{__method__} Before Release Savepoint")
+        #     # connection.disable_auto_reconnect { connection.execute("release savepoint rr_#{action}_#{remaining_attempts}") }
+        #   end
+        #   $log.info("XXXXX #{__method__} After Release Savepoint")
+        # rescue Exception => e
+        #   $log.info("XXXXX #{__method__} #{e}")
 
-          # connection.disable_auto_reconnect { connection.execute("rollback to savepoint rr_#{action}_#{remaining_attempts}") }
-          raise
-        ensure
-        end
+        #   # connection.disable_auto_reconnect { connection.execute("rollback to savepoint rr_#{action}_#{remaining_attempts}") }
+        #   raise
+        # ensure
+        # end
       end
 
       # Attempts to delete the source record from the target database.
