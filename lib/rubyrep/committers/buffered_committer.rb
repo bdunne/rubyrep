@@ -52,6 +52,7 @@ module RR
         end
         $log.info("XXXXX #{self.class.name}##{__method__} COMMIT FREQUENCY #{@commit_frequency.inspect}")
         @commit_frequency
+        5
       end
 
       # Commits the open transactions in both databases. Before committing,
